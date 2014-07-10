@@ -6,10 +6,14 @@ namespace HalClient;
 class Resource
 {
     private $data = array();
-    private $links = array();
+    private $linkCollection;
     private $cache = array();
-    private $curies = array();
     private $fromEmbed = false;
+
+    function __construct()
+    {
+        $this->linkCollection = new LinkCollection();
+    }
 
     /**
      * @return boolean
@@ -31,30 +35,23 @@ class Resource
         return $result;
     }
 
-    public function hasLink($name)
+    public function hasLink($rel)
     {
-        $name = explode('/', $name, 2);
-        if (count($name) == 1) {
-            return isset($this->links[$name[0]]);
-        } else {
-            return isset($this->links[$name[0]][$name[1]]);
-        }
+        return $this->linkCollection->hasLink($rel);
     }
 
     public function getUrl($linkName, $parameters = array())
     {
-        if (!$this->hasLink($linkName)) {
+        if (!$this->linkCollection->hasLink($linkName)) {
             throw new \InvalidArgumentException('Link "' . $linkName . '" does not exist.');
         }
-        $linkName = explode('/', $linkName, 2);
-        if (count($linkName) == 1) {
-            $link = $this->links[$linkName[0]];
-        } else {
-            $link = $this->links[$linkName[0]][$linkName[1]];
-        }
-        $href = $link['href'];
-        if ($link['templated']) {
-            return Resource::parseUrlTemplate($href);
+        /**
+         * @var $link Link
+         */
+        $link = $this->linkCollection->getLink($linkName);
+        $href = $link->getHref();
+        if ($link->isTemplate()) {
+            return Resource::parseUrlTemplate($href, $parameters);
         } else {
             return $href;
         }
@@ -100,14 +97,23 @@ class Resource
         $resource->fromEmbed = $fromEmbed;
 
         if (isset($response['_links'])) {
+
+            if(isset($response['_links']['curies'])){
+                foreach($response['_links']['curies'] as $curie){
+                    $curie = Link::parse('curies', $curie);
+                    $resource->linkCollection->addCurie($curie);
+                }
+            }
+
             foreach ($response['_links'] as $linkId => $linkData) {
-                $resource->links[$linkId] = $linkData;
                 if (isset($linkData[0])) {
                     foreach ($linkData as $link) {
-                        if (isset($link['name'])) {
-                            $resource->links[$linkId][$link['name']] = $link;
-                        }
+                        $link = Link::parse($linkId, $link);
+                        $resource->linkCollection->addMultiLink($link);
                     }
+                }else{
+                    $link = Link::parse($linkId, $linkData);
+                    $resource->linkCollection->addLink($link);
                 }
             }
         }

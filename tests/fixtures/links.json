@@ -2,7 +2,6 @@
     "_links": {
         "self": {"href": "/orders"},
         "next": {"href": "/orders?page=2"},
-        "find": {"href": "/orders{?id}", "templated": true},
         "curies": [
             {
                 "name": "acme",

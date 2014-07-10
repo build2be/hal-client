@@ -67,8 +67,8 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($resource->hasLink('self'));
         $this->assertTrue($resource->hasLink('next'));
         $this->assertTrue($resource->hasLink('find'));
-        $this->assertTrue($resource->hasLink('acme:widgets'));
-        $this->assertTrue($resource->hasLink('ea:find'));
+        $this->assertTrue($resource->hasLink('widgets'));
+        $this->assertTrue($resource->hasLink('find'));
 
         $this->assertTrue($resource->hasLink('curies'));
         $this->assertTrue($resource->hasLink('curies/ea'));
@@ -76,10 +76,19 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($resource->hasLink('curies/0'));
         $this->assertTrue($resource->hasLink('curies/1'));
 
-        $this->assertTrue($resource->hasLink('ea:admin'));
-        $this->assertTrue($resource->hasLink('ea:admin/0'));
-        $this->assertTrue($resource->hasLink('ea:admin/1'));
+        $this->assertTrue($resource->hasLink('admin'));
+        $this->assertTrue($resource->hasLink('admin/0'));
+        $this->assertTrue($resource->hasLink('admin/1'));
 
+    }
+
+    public function testGetUrl(){
+        $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
+        $this->assertEquals('/orders', $resource->getUrl('self'));
+        $this->assertEquals('/orders?page=2', $resource->getUrl('next'));
+        $this->assertEquals('/orders?id=2', $resource->getUrl('find', array('id' => 2)));
+        $this->assertEquals('http://docs.acme.com/relations/test', $resource->getUrl('curies/acme', array('rel' => 'test')));
+        $this->assertEquals('http://example.com/docs/rels/test', $resource->getUrl('curies/ea', array('rel' => 'test')));
     }
 
     public function testParseUrlTemplate()
