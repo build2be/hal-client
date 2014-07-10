@@ -28,18 +28,18 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('shipped', $properties['status']);
 
         $fixture = $this->getFixture('invalid_embeds.json');
-        try{
+        try {
             $parseEmbed->invokeArgs($resource, array($fixture['_embedded']['orders'][0]));
             $this->fail('Exception about missing href not thrown');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->assertInstanceOf('\HalClient\RfcException', $e);
             $this->assertEquals('Embedded resource has no _links/self/href attribute', $e->getMessage());
         }
 
-        try{
+        try {
             $parseEmbed->invokeArgs($resource, array($fixture['_embedded']['orders'][1]));
             $this->fail('Exception about invalid embed not thrown');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             $this->assertInstanceOf('\HalClient\RfcException', $e);
             $this->assertEquals('_links/self/href cannot be a template', $e->getMessage());
         }
@@ -61,7 +61,8 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20, $properties['shippedToday']);
     }
 
-    public function testHasLink(){
+    public function testHasLink()
+    {
         $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
         $this->assertTrue($resource->hasLink('self'));
         $this->assertTrue($resource->hasLink('next'));
@@ -79,6 +80,36 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($resource->hasLink('ea:admin/0'));
         $this->assertTrue($resource->hasLink('ea:admin/1'));
 
+    }
+
+    public function testParseUrlTemplate()
+    {
+        $resource = new \HalClient\Resource();
+
+        $template = 'http://example.com/order/';
+        $result = $resource->parseUrlTemplate($template, array());
+        $this->assertEquals('http://example.com/order/', $result);
+
+        $template = 'http://example.com/order/{order}/test/{test}';
+        $result = $resource->parseUrlTemplate($template, array(
+          'order' => 5,
+          'test' => 42
+        ));
+        $this->assertEquals('http://example.com/order/5/test/42', $result);
+
+        $template = 'http://example.com/order/{?id}';
+        $result = $resource->parseUrlTemplate($template, array(
+          'id' => 5,
+        ));
+        $this->assertEquals('http://example.com/order/?id=5', $result);
+
+        $template = 'http://example.com/order/{?id,test,test2}';
+        $result = $resource->parseUrlTemplate($template, array(
+          'id' => 5,
+          'test' => 'first',
+          'test2' => 'second'
+        ));
+        $this->assertEquals('http://example.com/order/?id=5&test=first&test2=second', $result);
     }
 
     protected function getPrivateMethod($className, $name)
