@@ -1,6 +1,7 @@
 <?php
+require_once(__DIR__ . '/TestBase.php');
 
-class ResourceTest extends PHPUnit_Framework_TestCase
+class ResourceTest extends TestBase
 {
     public function testParseEmbed()
     {
@@ -86,7 +87,8 @@ class ResourceTest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testGetUrl(){
+    public function testGetUrl()
+    {
         $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
         $this->assertEquals('/orders', $resource->getUrl('self'));
         $this->assertEquals('/orders?page=2', $resource->getUrl('next'));
@@ -94,15 +96,16 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('http://docs.acme.com/relations/test', $resource->getUrl('curies/acme', array('rel' => 'test')));
         $this->assertEquals('http://example.com/docs/rels/test', $resource->getUrl('curies/ea', array('rel' => 'test')));
 
-        try{
+        try {
             $resource->getUrl('nonexistent');
             $this->fail('Exception for non-existent link not thrown');
-        }catch (InvalidArgumentException $e){
+        } catch (InvalidArgumentException $e) {
             $this->assertEquals('Link "nonexistent" does not exist.', $e->getMessage());
         }
     }
 
-    public function testGetLink(){
+    public function testGetLink()
+    {
         $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
         /**
          * @var $link \HalClient\Link

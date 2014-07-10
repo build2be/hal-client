@@ -1,0 +1,10 @@
+{
+    "title": "title",
+    "name": "name",
+    "href": "/rel/{id}",
+    "templated": true,
+    "deprication": "http://example.com/news/rel-function-depricated",
+    "lang" : "en",
+    "profile": "profile",
+    "type": "type"
+}

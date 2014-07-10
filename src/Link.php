@@ -1,15 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martijn
- * Date: 10-7-14
- * Time: 13:23
- */
 
 namespace HalClient;
 
 
-class Link {
+class Link
+{
     private $href;
     private $title;
     private $name;
@@ -22,38 +17,39 @@ class Link {
     private $prefix;
     private $documentationUrl;
 
-    static function parse($rel, $object){
+    static function parse($rel, $object)
+    {
         $link = new Link();
         $link->setHref($object['href']);
 
-        if(strpos($rel, ':') !== false){
+        if (strpos($rel, ':') !== false) {
             $part = explode(':', $rel, 2);
             $link->setRel($part[1]);
             $link->setPrefix($part[0]);
-        }else{
+        } else {
             $link->setRel($rel);
             $link->setPrefix('');
         }
 
-        if(isset($object['name'])){
+        if (isset($object['name'])) {
             $link->setName($object['name']);
         }
-        if(isset($object['title'])){
+        if (isset($object['title'])) {
             $link->setTitle($object['title']);
         }
-        if(isset($object['templated']) && $object['templated']){
+        if (isset($object['templated']) && $object['templated']) {
             $link->setIsTemplate(true);
         }
-        if(isset($object['type'])){
+        if (isset($object['type'])) {
             $link->setType($object['type']);
         }
-        if(isset($object['deprication'])){
+        if (isset($object['deprication'])) {
             $link->setDeprication($object['deprication']);
         }
-        if(isset($object['profile'])){
+        if (isset($object['profile'])) {
             $link->setProfile($object['profile']);
         }
-        if(isset($object['lang'])){
+        if (isset($object['lang'])) {
             $link->setLang($object['lang']);
         }
 
@@ -119,7 +115,8 @@ class Link {
     /**
      * @return bool
      */
-    public function isDepricated(){
+    public function isDepricated()
+    {
         return !empty($this->deprication);
     }
 
