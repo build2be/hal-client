@@ -61,8 +61,6 @@ class Resource
             }
         }
 
-
-
         return $resource;
     }
 
