@@ -1,0 +1,23 @@
+{
+    "name": "MartijnBraam/hal-client",
+    "description": "HAL API client for php",
+    "minimum-stability": "dev",
+    "licence": "proprietary",
+    "authors": [
+        {
+            "name": "Martijn Braam",
+            "email": "martijn@brixit.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "HalClient\\": "src/"
+        }
+    },
+    "require": {
+        "curl/curl": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*@dev"
+    }
+}
