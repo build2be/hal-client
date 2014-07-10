@@ -18,12 +18,26 @@ class LinkCollection {
     }
 
     public function addLink(Link $link){
+        $link = $this->addDocumentation($link);
         $this->links[$link->getRel()] = $link;
     }
 
     public function addMultiLink(Link $link){
-            $this->links[$link->getRel()][] = $link;
-            $this->links[$link->getRel()][$link->getName()] = $link;
+        $link = $this->addDocumentation($link);
+        $this->links[$link->getRel()][] = $link;
+        $this->links[$link->getRel()][$link->getName()] = $link;
+    }
+
+    private function addDocumentation(Link $link){
+        $prefix = $link->getPrefix();
+        if(!empty($prefix)){
+            if(isset($this->curies[$prefix])){
+                $template = $this->curies[$prefix]->getHref();
+                $url = Resource::parseUrlTemplate($template, array('rel' => $link->getRel()));
+                $link->setDocumentationUrl($url);
+            }
+        }
+        return $link;
     }
 
     public function getLink($rel){

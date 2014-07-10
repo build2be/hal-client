@@ -57,6 +57,13 @@ class Resource
         }
     }
 
+    public function getLink($linkName){
+        if (!$this->linkCollection->hasLink($linkName)) {
+            throw new \InvalidArgumentException('Link "' . $linkName . '" does not exist.');
+        }
+        return $this->linkCollection->getLink($linkName);
+    }
+
     static function parseUrlTemplate($template, $parameters = array())
     {
         //$regex_fieldnames = '/\\{\\??([a-zA-Z0-9]+),?(?:([a-zA-Z0-9]+,)*([a-zA-Z0-9]+)?)*\\}/';

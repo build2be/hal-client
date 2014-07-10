@@ -21,7 +21,6 @@ class Link {
     private $rel;
     private $prefix;
     private $documentationUrl;
-    private $curies = array();
 
     static function parse($rel, $object){
         $link = new Link();
@@ -40,7 +39,7 @@ class Link {
             $link->setName($object['name']);
         }
         if(isset($object['title'])){
-            $link->setHref($object['title']);
+            $link->setTitle($object['title']);
         }
         if(isset($object['templated']) && $object['templated']){
             $link->setIsTemplate(true);

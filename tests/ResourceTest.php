@@ -102,6 +102,31 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetLink(){
+        $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
+        /**
+         * @var $link \HalClient\Link
+         */
+        $link = $resource->getLink('find');
+
+        $this->assertEquals('find', $link->getRel());
+        $this->assertEquals('ea', $link->getPrefix());
+        $this->assertEquals('/orders{?id}', $link->getHref());
+        $this->assertEquals('http://example.com/docs/rels/find', $link->getDocumentationUrl());
+        $this->assertFalse($link->isDepricated());
+        $this->assertTrue($link->isTemplate());
+
+        $link = $resource->getLink('admin/0');
+
+        $this->assertEquals('admin', $link->getRel());
+        $this->assertEquals('ea', $link->getPrefix());
+        $this->assertEquals('/admins/2', $link->getHref());
+        $this->assertEquals('http://example.com/docs/rels/admin', $link->getDocumentationUrl());
+        $this->assertEquals('Fred', $link->getTitle());
+        $this->assertFalse($link->isDepricated());
+        $this->assertFalse($link->isTemplate());
+    }
+
     public function testParseUrlTemplate()
     {
         $resource = new \HalClient\Resource();
