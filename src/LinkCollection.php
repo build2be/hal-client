@@ -48,7 +48,7 @@ class LinkCollection {
             if(is_array($this->links[$rel[0]])){
                 return isset($this->links[$rel[0]][$rel[1]]);
             }else{
-                throw new \InvalidArgumentException('Invalid index "' . $rel[1] . '" in "' . $rel[0] . '".');
+                return false;
             }
         }
     }

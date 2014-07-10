@@ -80,6 +80,10 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($resource->hasLink('admin/0'));
         $this->assertTrue($resource->hasLink('admin/1'));
 
+        $this->assertFalse($resource->hasLink('admin/2'));
+        $this->assertFalse($resource->hasLink('test'));
+        $this->assertFalse($resource->hasLink('self/1'));
+
     }
 
     public function testGetUrl(){
@@ -89,6 +93,13 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('/orders?id=2', $resource->getUrl('find', array('id' => 2)));
         $this->assertEquals('http://docs.acme.com/relations/test', $resource->getUrl('curies/acme', array('rel' => 'test')));
         $this->assertEquals('http://example.com/docs/rels/test', $resource->getUrl('curies/ea', array('rel' => 'test')));
+
+        try{
+            $resource->getUrl('nonexistent');
+            $this->fail('Exception for non-existent link not thrown');
+        }catch (InvalidArgumentException $e){
+            $this->assertEquals('Link "nonexistent" does not exist.', $e->getMessage());
+        }
     }
 
     public function testParseUrlTemplate()
