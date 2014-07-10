@@ -3,6 +3,9 @@
 namespace HalClient;
 
 
+use Curl\Curl;
+use Symfony\Component\Yaml\Exception\RuntimeException;
+
 class Resource
 {
     private $data = array();
@@ -13,6 +16,24 @@ class Resource
     function __construct()
     {
         $this->linkCollection = new LinkCollection();
+    }
+
+    static function request($url){
+        $curl = new Curl();
+        $curl->setHeader('Accept', 'application/hal+json');
+        $curl->get($url);
+        if($curl->error){
+            throw new RuntimeException($curl->error_message, $curl->error_code);
+        }else {
+            $data = json_decode($curl->response, true);
+            return Resource::fromJsonResponse($data);
+        }
+
+    }
+
+    public function uncached(){
+        $url = $this->getUrl('self');
+        return Resource::request($url);
     }
 
     /**
