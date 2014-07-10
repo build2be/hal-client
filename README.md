@@ -1,8 +1,42 @@
 PHP HAL Client
 ==============
 
+Installation
+------------
+
+In composer.json:
+
+```json
+{
+    "repositories": [
+        {
+            "url": "git@github.com:build2be/hal-client.git",
+            "type": "git"
+        }
+    ],
+    "require": {
+        "build2be/hal-client": "*"
+    }
+}
+
+```
+
 Usage
 -----
+
+Example file on /orders:
+
+```json
+{
+    "_links": {
+        "self": { "href": "/orders" },
+        "next": { "href": "/orders?page=2" },
+        "find": { "href": "/orders{?id}", "templated": true }
+    },
+    "currentlyProcessing": 14,
+    "shippedToday": 20
+}
+```
 
 ```php
 <?php

@@ -1,5 +1,5 @@
 {
-    "name": "MartijnBraam/hal-client",
+    "name": "build2be/hal-client",
     "description": "HAL API client for php",
     "minimum-stability": "dev",
     "licence": "proprietary",
