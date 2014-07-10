@@ -75,10 +75,10 @@ class Resource
     private function parseEmbed($embed)
     {
         if (!isset($embed['_links']['self']['href'])) {
-            // RFC Validation error
+            throw new RfcException('Embedded resource has no _links/self/href attribute');
         }
         if (isset($embed['_links']['self']['templated']) && $embed['_links']['self']['templated'] == true) {
-            // RFC Validation error
+            throw new RfcException('_links/self/href cannot be a template');
         }
         $key = $embed['_links']['self']['href'];
         $parsed = Resource::fromJsonResponse($embed);
