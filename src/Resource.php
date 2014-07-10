@@ -64,14 +64,6 @@ class Resource
         return $resource;
     }
 
-    private function addCurie($structure)
-    {
-        $this->curies[$structure['name']] = array(
-          'href' => $structure['href'],
-          'templated' => $structure['templated'],
-        );
-    }
-
     private function parseEmbed($embed)
     {
         if (!isset($embed['_links']['self']['href'])) {
@@ -81,7 +73,7 @@ class Resource
             throw new RfcException('_links/self/href cannot be a template');
         }
         $key = $embed['_links']['self']['href'];
-        $parsed = Resource::fromJsonResponse($embed);
+        $parsed = Resource::fromJsonResponse($embed, true);
         $this->cache[$key] = $parsed;
     }
 }

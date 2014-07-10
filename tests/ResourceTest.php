@@ -26,6 +26,23 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('USD', $properties['currency']);
         $this->assertArrayHasKey('status', $properties);
         $this->assertEquals('shipped', $properties['status']);
+
+        $fixture = $this->getFixture('invalid_embeds.json');
+        try{
+            $parseEmbed->invokeArgs($resource, array($fixture['_embedded']['orders'][0]));
+            $this->fail('Exception about missing href not thrown');
+        }catch(\Exception $e){
+            $this->assertInstanceOf('\HalClient\RfcException', $e);
+            $this->assertEquals('Embedded resource has no _links/self/href attribute', $e->getMessage());
+        }
+
+        try{
+            $parseEmbed->invokeArgs($resource, array($fixture['_embedded']['orders'][1]));
+            $this->fail('Exception about invalid embed not thrown');
+        }catch(\Exception $e){
+            $this->assertInstanceOf('\HalClient\RfcException', $e);
+            $this->assertEquals('_links/self/href cannot be a template', $e->getMessage());
+        }
     }
 
     public function testGetProperties()
@@ -37,6 +54,11 @@ class ResourceTest extends PHPUnit_Framework_TestCase
 
         $this->assertArrayNotHasKey('_links', $properties);
         $this->assertArrayNotHasKey('_embedded', $properties);
+
+        $this->assertArrayHasKey('currentlyProcessing', $properties);
+        $this->assertEquals(14, $properties['currentlyProcessing']);
+        $this->assertArrayHasKey('shippedToday', $properties);
+        $this->assertEquals(20, $properties['shippedToday']);
     }
 
     protected function getPrivateMethod($className, $name)
