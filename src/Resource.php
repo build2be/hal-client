@@ -94,6 +94,10 @@ class Resource
         return $this->linkCollection->getLink($linkName);
     }
 
+    public function getLinks(){
+        return $this->linkCollection->getAll();
+    }
+
     static function parseUrlTemplate($template, $parameters = array())
     {
         //$regex_fieldnames = '/\\{\\??([a-zA-Z0-9]+),?(?:([a-zA-Z0-9]+,)*([a-zA-Z0-9]+)?)*\\}/';

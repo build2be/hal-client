@@ -17,6 +17,10 @@ class LinkCollection {
         $this->curies[$curie->getName()] = $curie;
     }
 
+    public function getAll(){
+        return $this->links;
+    }
+
     public function addLink(Link $link){
         $link = $this->addDocumentation($link);
         $this->links[$link->getRel()] = $link;
