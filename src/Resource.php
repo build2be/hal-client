@@ -18,20 +18,28 @@ class Resource
         $this->linkCollection = new LinkCollection();
     }
 
-    static function request($url){
+    static function request($url, $username = null, $password = null, $headers = array())
+    {
         $curl = new Curl();
+        if ($username !== null && $password !== null) {
+            $curl->setBasicAuthentication($username, $password);
+        }
+        foreach ($headers as $key => $value) {
+            $curl->setHeader($key, $value);
+        }
         $curl->setHeader('Accept', 'application/hal+json');
         $curl->get($url);
-        if($curl->error){
+        if ($curl->error) {
             throw new RuntimeException($curl->error_message, $curl->error_code);
-        }else {
+        } else {
             $data = json_decode($curl->response, true);
             return Resource::fromJsonResponse($data);
         }
 
     }
 
-    public function uncached(){
+    public function uncached()
+    {
         $url = $this->getUrl('self');
         return Resource::request($url);
     }
@@ -78,7 +86,8 @@ class Resource
         }
     }
 
-    public function getLink($linkName){
+    public function getLink($linkName)
+    {
         if (!$this->linkCollection->hasLink($linkName)) {
             throw new \InvalidArgumentException('Link "' . $linkName . '" does not exist.');
         }
@@ -103,12 +112,12 @@ class Resource
         $regex_urlparameter_fields = '/(\\{\\?[a-zA-Z0-9,]+\\})/';
         $template = preg_replace_callback(
           $regex_urlparameter_fields,
-          function ($matches) use ($parameters){
+          function ($matches) use ($parameters) {
               $matches = $matches[0];
               $matches = substr(substr($matches, 2), 0, -1);
               $fields = explode(',', $matches);
               $results = array();
-              foreach($fields as $field){
+              foreach ($fields as $field) {
                   $results[$field] = $parameters[$field];
               }
               $querystr = http_build_query($results);
@@ -126,8 +135,8 @@ class Resource
 
         if (isset($response['_links'])) {
 
-            if(isset($response['_links']['curies'])){
-                foreach($response['_links']['curies'] as $curie){
+            if (isset($response['_links']['curies'])) {
+                foreach ($response['_links']['curies'] as $curie) {
                     $curie = Link::parse('curies', $curie);
                     $resource->linkCollection->addCurie($curie);
                 }
@@ -139,7 +148,7 @@ class Resource
                         $link = Link::parse($linkId, $link);
                         $resource->linkCollection->addMultiLink($link);
                     }
-                }else{
+                } else {
                     $link = Link::parse($linkId, $linkData);
                     $resource->linkCollection->addLink($link);
                 }
