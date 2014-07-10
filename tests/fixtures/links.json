@@ -1,0 +1,32 @@
+{
+    "_links": {
+        "self": {"href": "/orders"},
+        "next": {"href": "/orders?page=2"},
+        "find": {"href": "/orders{?id}", "templated": true},
+        "curies": [
+            {
+                "name": "acme",
+                "href": "http://docs.acme.com/relations/{rel}",
+                "templated": true
+            },
+            {"name": "ea", "href": "http://example.com/docs/rels/{rel}", "templated": true}
+        ],
+        "acme:widgets": {"href": "/widgets"},
+        "ea:find": {
+            "href": "/orders{?id}",
+            "templated": true
+        },
+        "ea:admin": [
+            {
+                "href": "/admins/2",
+                "title": "Fred"
+            },
+            {
+                "href": "/admins/5",
+                "title": "Kate"
+            }
+        ]
+    },
+    "currentlyProcessing": 14,
+    "shippedToday": 20
+}

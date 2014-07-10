@@ -61,6 +61,26 @@ class ResourceTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(20, $properties['shippedToday']);
     }
 
+    public function testHasLink(){
+        $resource = \HalClient\Resource::fromJsonResponse($this->getFixture('links.json'));
+        $this->assertTrue($resource->hasLink('self'));
+        $this->assertTrue($resource->hasLink('next'));
+        $this->assertTrue($resource->hasLink('find'));
+        $this->assertTrue($resource->hasLink('acme:widgets'));
+        $this->assertTrue($resource->hasLink('ea:find'));
+
+        $this->assertTrue($resource->hasLink('curies'));
+        $this->assertTrue($resource->hasLink('curies/ea'));
+        $this->assertTrue($resource->hasLink('curies/acme'));
+        $this->assertTrue($resource->hasLink('curies/0'));
+        $this->assertTrue($resource->hasLink('curies/1'));
+
+        $this->assertTrue($resource->hasLink('ea:admin'));
+        $this->assertTrue($resource->hasLink('ea:admin/0'));
+        $this->assertTrue($resource->hasLink('ea:admin/1'));
+
+    }
+
     protected function getPrivateMethod($className, $name)
     {
         $class = new ReflectionClass($className);

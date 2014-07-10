@@ -30,6 +30,15 @@ class Resource
         return $result;
     }
 
+    public function hasLink($name){
+        $name = explode('/', $name, 2);
+        if(count($name) == 1){
+            return isset($this->links[$name[0]]);
+        }else{
+            return isset($this->links[$name[0]][$name[1]]);
+        }
+    }
+
     static function fromJsonResponse($response, $fromEmbed = false)
     {
         $resource = new Resource();
