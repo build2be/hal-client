@@ -13,6 +13,11 @@ class Resource
     private $cache = array();
     private $fromEmbed = false;
 
+    private $curl_baseUrl;
+    private $curl_username;
+    private $curl_password;
+    private $curl_headers = array();
+
     function __construct()
     {
         $this->linkCollection = new LinkCollection();
@@ -33,7 +38,9 @@ class Resource
             throw new RuntimeException($curl->error_message, $curl->error_code);
         } else {
             $data = json_decode($curl->response, true);
-            return Resource::fromJsonResponse($data);
+            $resource = Resource::fromJsonResponse($data);
+            $resource->setCurlInfo($url, $username, $password, $headers);
+            return $resource;
         }
 
     }
@@ -50,6 +57,13 @@ class Resource
     public function isFromEmbed()
     {
         return $this->fromEmbed;
+    }
+
+    public function setCurlInfo($url, $username, $password, $headers){
+        $this->curl_baseUrl = $url;
+        $this->curl_username = $username;
+        $this->curl_password = $password;
+        $this->curl_headers = $headers;
     }
 
     public function getProperties()
@@ -129,6 +143,30 @@ class Resource
           }, $template);
 
         return $template;
+    }
+
+    public function post(array $data, $url=""){
+        $curl = new Curl();
+        if ($this->curl_username !== null && $this->curl_password !== null) {
+            $curl->setBasicAuthentication($this->curl_username, $this->curl_password);
+        }
+        foreach ($this->curl_headers as $key => $value) {
+            $curl->setHeader($key, $value);
+        }
+        $curl->setHeader('Accept', 'application/hal+json');
+        $curl->setHeader('Content-type', 'application/hal+json');
+        if($url==""){
+            $url = $this->curl_baseUrl;
+        }
+        $curl->post($url, $data);
+        if ($curl->error) {
+            throw new RuntimeException($curl->error_message, $curl->error_code);
+        } else {
+            $data = json_decode($curl->response, true);
+            $resource = Resource::fromJsonResponse($data);
+            //$resource->setCurlInfo($url, $username, $password, $headers);
+            return $resource;
+        }
     }
 
     static function fromJsonResponse($response, $fromEmbed = false)
